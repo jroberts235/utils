@@ -1,0 +1,26 @@
+#!/usr/bin/env ruby
+# This script will find out the current working dir and asses the cookbook name 
+# then execute the "knife upload $COOKBOOK" command from two dirs up.
+
+user_name     = `whoami`.chomp
+knife_path    = '/usr/bin/knife'
+knife_cfg     = "/Users/#{user_name}/chef-repo/.chef/knife.rb"
+repo_dir      = "/Users/#{user_name}/chef-repo"
+current_dir   = (Dir.pwd).split('/').last
+one_dir_above = (Dir.pwd).split('/')[-2]
+
+
+if one_dir_above != 'cookbooks'
+    puts "ERROR! This command can only be run from inside a cookbook's directory!"
+    puts 'try "cd ~/chef-repo/cookbooks/<COOKBOOK>/" first, the re-run this command.'
+    exit 1
+end
+
+cmd = "#{knife_path} cookbook upload #{current_dir} -c #{knife_cfg}"
+
+Dir.chdir(repo_dir){
+    output = %x(#{cmd})
+    puts output
+}
+
+puts "exit status of knife upload: #{$?.exitstatus}"

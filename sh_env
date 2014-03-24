@@ -1,0 +1,42 @@
+#!/usr/bin/env ruby
+require 'colorize'
+# This script will find out the current working dir and asses the cookbook name 
+# then execute the "knife upload $COOKBOOK" command from two dirs up.
+
+environment   = ARGV[0].dup
+cookbook      = ARGV[1]
+user_name     = `whoami`.chomp
+knife_path    = '/usr/bin/knife'
+knife_cfg     = "/Users/#{user_name}/chef-repo/.chef/knife.rb"
+repo_dir      = "/Users/#{user_name}/chef-repo"
+
+if (environment == nil or cookbook == nil)
+    puts "ERROR! This command requires that you prove the evironment and the cookbook to show."
+    exit 1
+end
+if environment == nil
+    puts "ERROR! This command requires that you prove the evironment to show."
+    exit 1
+end
+
+if environment == 'all'
+    a = ['prod','dr','ops','stg',]
+    a.each do |env|
+    environment = env
+    cmd = "#{knife_path} environment show #{environment} -c #{knife_cfg} | grep #{cookbook}"
+        Dir.chdir(repo_dir){
+            raw_output = %x(#{cmd})
+            output_a = raw_output.split(' ')
+            printf("%5s %s %s %s\n", "#{env.green}:", output_a[0], output_a[1], output_a[2])
+        }
+    end
+else
+    cmd = "#{knife_path} environment show #{environment} -c #{knife_cfg} | grep #{cookbook}"
+    Dir.chdir(repo_dir){
+        raw_output = %x(#{cmd})
+        output_a = raw_output.split(' ')
+        printf("%5s %s %s %s\n", "#{environment.green}:", output_a[0], output_a[1], output_a[2])
+    }
+end
+
+puts "There was a problem executing your command!".red if $?.exitstatus > 0
