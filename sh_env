@@ -1,10 +1,13 @@
 #!/usr/bin/env ruby
 require 'colorize'
-# This script will find out the current working dir and asses the cookbook name 
-# then execute the "knife upload $COOKBOOK" command from two dirs up.
 
-environment   = ARGV[0].dup
-cookbook      = ARGV[1]
+arg1 = ARGV[0].dup
+arg2 = ARGV[1] || (Dir.pwd).split('/').last
+
+raise "missing environment!" unless arg1
+
+environment   = arg1
+cookbook      = arg2
 user_name     = `whoami`.chomp
 knife_path    = '/usr/bin/knife'
 knife_cfg     = "/Users/#{user_name}/chef-repo/.chef/knife.rb"
