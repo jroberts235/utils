@@ -4,23 +4,16 @@ require 'colorize'
 arg1 = ARGV[0].dup
 arg2 = ARGV[1] || (Dir.pwd).split('/').last
 
-raise "missing environment!" unless arg1
+raise "ERROR! This command requires that you provide the evironment to show." unless arg1
+raise "Knife can't be found at '/usr/bin/knife'" unless File.exist?('/usr/bin/knife')
 
 environment   = arg1
-cookbook      = arg2
+cookbook      = arg2 
+
 user_name     = `whoami`.chomp
 knife_path    = '/usr/bin/knife'
 knife_cfg     = "/Users/#{user_name}/chef-repo/.chef/knife.rb"
 repo_dir      = "/Users/#{user_name}/chef-repo"
-
-if (environment == nil or cookbook == nil)
-    puts "ERROR! This command requires that you prove the evironment and the cookbook to show."
-    exit 1
-end
-if environment == nil
-    puts "ERROR! This command requires that you prove the evironment to show."
-    exit 1
-end
 
 if environment == 'all'
     a = ['prod','dr','ops','stg',]
