@@ -1,10 +1,15 @@
 #!/usr/bin/env ruby
 require 'colorize'
 
-arg1 = ARGV[0].dup
+# accept nil for environment and show all env's
+if ARGV[0] == nil
+  arg1 = nil
+else
+  arg1 = ARGV[0].dup
+end
+
 arg2 = ARGV[1] || (Dir.pwd).split('/').last
 
-raise "ERROR! This command requires that you provide the evironment to show." unless arg1
 raise "Knife can't be found at '/usr/bin/knife'" unless File.exist?('/usr/bin/knife')
 
 environment   = arg1
@@ -15,7 +20,7 @@ knife_path    = '/usr/bin/knife'
 knife_cfg     = "/Users/#{user_name}/chef-repo/.chef/knife.rb"
 repo_dir      = "/Users/#{user_name}/chef-repo"
 
-if environment == 'all'
+if environment == nil
     a = ['prod','dr','ops','stg',]
     a.each do |env|
     environment = env
