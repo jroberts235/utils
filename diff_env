@@ -34,7 +34,6 @@ if environment == nil
             chefsrv_output = %x(#{get_env_from_chefsrv})
         }
             raw_chefsrv_output = raw_output.split(' ')
-            #system('vimdiff #{chefsrv_output} #{lcl_env_dir}#{environment}') 
     end
 else
     # environment was specified
@@ -92,15 +91,15 @@ else
     
     h_lcl_lines.each do |cookbook, version|
         if h_srv_lines[cookbook] != version
-            puts "!! The #{cookbook.tr(':', '')} differs from what is on the chefserver !!"
-            puts "Chef:  #{cookbook} = #{h_srv_lines[cookbook]}"
-            puts "Local: #{cookbook} = #{version}"
+            puts "* ".red + "The #{cookbook.tr(':', '').cyan} cookbook version does not match what is on the chefserver!" + " *".red
+            puts "Chef  => #{cookbook} = #{h_srv_lines[cookbook]}"
+            puts "Local => #{cookbook} = #{version}"
             mismatches += 1
         end
     end 
 end
 
-puts "You local copy agrees with the chefserver." if mismatches == 0
+puts "* ".green + "Up to date" + " *".green if mismatches == 0
 
 
 puts "There was a problem executing your command!".red if $?.exitstatus > 0
