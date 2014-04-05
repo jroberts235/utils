@@ -46,7 +46,7 @@ else
             s_lcl_lines = file.read  
         file.close
 
-        s_lcl_lines.each_line do |line| 
+        s_lcl_lines.each_line do |line| # take each line from the strin and put into array if '=' is found
             line.tr!("\n", '') #
             line.tr!('"','') # 
             line.tr!(',',':') # 
@@ -55,23 +55,23 @@ else
                 a_lcl_lines << (line.split(' ', 2))[1]
             end
         end
-        a_lcl_lines.each do |line|
+        a_lcl_lines.each do |line| # split each element into hash key and value
             line.tr!(' ', '')
             h_lcl_lines[(line.split('=', 2))[0]] = (line.split('=', 2))[1]
         end
 
         ## get chefserver's perception of environment ##
-        get_env_from_chefsrv = "#{knife_path} environment show #{environment} -c #{knife_cfg}" 
+        get_env_from_chefsrv = "#{knife_path} environment show #{environment} -c #{knife_cfg}" # cmd to run 
         raw_chefsrv_output = %x(#{get_env_from_chefsrv}) #%x() is basicly for syscall
 
         # take each line and put into a_chefsrv_output
-        a_chefsrv_output = raw_chefsrv_output.lines.map(&:chomp)
-        a_chefsrv_output.each do |line| 
+        a_chefsrv_output = raw_chefsrv_output.lines.map(&:chomp) # take each line of string and put into an array
+        a_chefsrv_output.each do |line| # find the lines with '=' in them 
             if line.include?('=') 
-                a_srv_lines << line
+                a_srv_lines << line # add the line to an array
             end
         end
-        a_srv_lines.each do |line|
+        a_srv_lines.each do |line| # add each element to a hash key and value
         line.tr!(' ', '')
             h_srv_lines[(line.split('=', 2))[0]] = ((line.split('=', 2))[1]).tr("\n", '')
         end
@@ -81,18 +81,18 @@ else
     ## comparator ##
     # for each key in h_lcl_lines check the value of the key by the same name in h_srv_lines
     
-    h_lcl_lines.each do |cookbook, version|
+    h_lcl_lines.each do |cookbook, version| # walk the local hash and compare values with h_srv_lines hash
         if h_srv_lines[cookbook] != version
             puts "* ".red + "The #{cookbook.tr(':', '').cyan} cookbook version does not match what is on the chefserver!" + " *".red
             puts "Maybe someone didn't comit !?!?"
             puts "Chef  => #{cookbook} = #{h_srv_lines[cookbook]}"
             puts "Local => #{cookbook} = #{version}"
-            mismatches += 1
+            mismatches += 1 # found a mismatch
         end
     end 
 end
 
-puts "* ".green + "In Sync" + " *".green if mismatches == 0
+puts "* ".green + "In Sync" + " *".green if mismatches == 0 # light is green, trap is clean
 
 
-puts "There was a problem executing your command!".red if $?.exitstatus > 0
+puts "There was a problem executing your command!".red if $?.exitstatus > 0 # if cmd failed for some reason
