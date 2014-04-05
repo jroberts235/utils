@@ -26,6 +26,7 @@ h_lcl_lines = Hash.new # hash of
 
 # no environment was specified. show all.
 if environment == nil
+    puts "Currently, you must supply the Environment to compare." ; exit(1)
     a = ['prod','dr','ops','stg',]
     a.each do |env|
     environment = env
