@@ -93,6 +93,7 @@ else
     h_lcl_lines.each do |cookbook, version|
         if h_srv_lines[cookbook] != version
             puts "* ".red + "The #{cookbook.tr(':', '').cyan} cookbook version does not match what is on the chefserver!" + " *".red
+            puts "Maybe someone didn't comit !?!?"
             puts "Chef  => #{cookbook} = #{h_srv_lines[cookbook]}"
             puts "Local => #{cookbook} = #{version}"
             mismatches += 1
@@ -100,7 +101,7 @@ else
     end 
 end
 
-puts "* ".green + "Up to date" + " *".green if mismatches == 0
+puts "* ".green + "In Sync" + " *".green if mismatches == 0
 
 
 puts "There was a problem executing your command!".red if $?.exitstatus > 0
