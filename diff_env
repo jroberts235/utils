@@ -47,9 +47,7 @@ else
         file.close
 
         s_lcl_lines.each_line do |line| # take each line from the strin and put into array if '=' is found
-            line.tr!("\n", '') #
-            line.tr!('"','') # 
-            line.tr!(',',':') # 
+            line.tr!("\n", '') ; line.tr!('"','') ; line.tr!(',',':') # cleanup the line
             if line.include?('=')
                 line.lines.map!(&:chomp)
                 a_lcl_lines << (line.split(' ', 2))[1]
@@ -72,7 +70,7 @@ else
             end
         end
         a_srv_lines.each do |line| # add each element to a hash key and value
-        line.tr!(' ', '')
+        line.tr!(' ', '') # remove whitespaces
             h_srv_lines[(line.split('=', 2))[0]] = ((line.split('=', 2))[1]).tr("\n", '')
         end
 
