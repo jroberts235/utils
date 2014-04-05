@@ -1,0 +1,106 @@
+#!/usr/bin/env ruby
+require 'colorize' # gem install 'colorize'
+
+# accept nil for environment and show all env's
+if ARGV[0] == nil
+  arg1 = nil
+else
+  arg1 = ARGV[0]#.dup
+end
+
+
+raise "Knife can't be found at '/usr/bin/knife'".red unless File.exist?('/usr/bin/knife')
+
+environment   = arg1
+
+mismatches  = 0
+user_name   = `whoami`.chomp
+knife_path  = '/usr/bin/knife'
+knife_cfg   = "/Users/#{user_name}/chef-repo/.chef/knife.rb"
+repo_dir    = "/Users/#{user_name}/chef-repo"
+lcl_env_dir = "/Users/#{user_name}/chef-repo/environments/"
+a_srv_lines = Array.new # array of cookbooks and versions from chefserver
+h_srv_lines = Hash.new # hash of 
+a_lcl_lines = Array.new # array of cookbooks and versions from local files
+h_lcl_lines = Hash.new # hash of 
+
+# no environment was specified. show all.
+if environment == nil
+    a = ['prod','dr','ops','stg',]
+    a.each do |env|
+    environment = env
+    get_env_from_chefsrv = "#{knife_path} environment show #{environment} -c #{knife_cfg}"
+        Dir.chdir(repo_dir){
+            chefsrv_output = %x(#{get_env_from_chefsrv})
+        }
+            raw_chefsrv_output = raw_output.split(' ')
+            #system('vimdiff #{chefsrv_output} #{lcl_env_dir}#{environment}') 
+    end
+else
+    # environment was specified
+
+    ## open the local perception of the environment file ##
+    Dir.chdir(repo_dir){
+        s_lcl_lines = "" # create and empty string
+        file = File.open("environments/#{environment}.rb", "rb") # slurp file as binary
+            s_lcl_lines = file.read  
+        file.close
+
+        s_lcl_lines.each_line do |line| 
+            line.tr!("\n", '') #
+            line.tr!('"','') # 
+            line.tr!(',',':') # 
+            if line.include?('=')
+                line.lines.map!(&:chomp)
+                a_lcl_lines << (line.split(' ', 2))[1]
+            end
+        end
+#a_lcl_lines.each { |line| puts line } # temporary
+        a_lcl_lines.each do |line|
+            line.tr!(' ', '')
+            h_lcl_lines[(line.split('=', 2))[0]] = (line.split('=', 2))[1]
+        end
+        #h_lcl_lines.each { |k, v| puts "#{k} = #{v}" }
+       
+#puts h_lcl_lines.inspect 
+#puts h_lcl_lines.class 
+
+
+        ## get chefserver's perception of environment ##
+        get_env_from_chefsrv = "#{knife_path} environment show #{environment} -c #{knife_cfg}" 
+        raw_chefsrv_output = %x(#{get_env_from_chefsrv}) #%x() is basicly for syscall
+
+        # take each line and put into an Array element
+        a_chefsrv_output = raw_chefsrv_output.lines.map(&:chomp)
+        a_chefsrv_output.each do |line| 
+            if line.include?('=') 
+                a_srv_lines << line
+            end
+        end
+        a_srv_lines.each do |line|
+        line.tr!(' ', '')
+            h_srv_lines[(line.split('=', 2))[0]] = ((line.split('=', 2))[1]).tr("\n", '')
+        end
+        #h_srv_lines.each { |k, v| puts "#{k} = #{v}" }
+
+    }
+    # h_lcl_lines
+    # h_srv_lines
+    
+    ## comparator ##
+    # for each key in h_lcl_lines check the value of the key by the same name in h_srv_lines
+    
+    h_lcl_lines.each do |cookbook, version|
+        if h_srv_lines[cookbook] != version
+            puts "!! The #{cookbook.tr(':', '')} differs from what is on the chefserver !!"
+            puts "Chef:  #{cookbook} = #{h_srv_lines[cookbook]}"
+            puts "Local: #{cookbook} = #{version}"
+            mismatches += 1
+        end
+    end 
+end
+
+puts "You local copy agrees with the chefserver." if mismatches == 0
+
+
+puts "There was a problem executing your command!".red if $?.exitstatus > 0
