@@ -20,6 +20,9 @@ knife_path    = '/usr/bin/knife'
 knife_cfg     = "/Users/#{user_name}/chef-repo/.chef/knife.rb"
 repo_dir      = "/Users/#{user_name}/chef-repo"
 
+file = File.open('metadata.rb', 'r').each { |line| puts "Local #{line}" if line.include?('version') }
+file.close
+
 if environment == nil
     a = ['prod','dr','ops','stg',]
     a.each do |env|
