@@ -21,8 +21,8 @@ knife_cfg     = "/Users/#{user_name}/chef-repo/.chef/knife.rb"
 repo_dir      = "/Users/#{user_name}/chef-repo"
 cookbook_dir  = "#{repo_dir}/cookbooks/#{cookbook}"
 
-
-file = File.open("#{cookbook_dir}/metadata.rb", 'r').each { |line| puts "Local #{line}" if line.include?('version') }
+puts 
+file = File.open("#{cookbook_dir}/metadata.rb", 'r').each { |line| puts "Local #{line}".cyan if line.include?('version') }
 file.close
 
 if environment == nil or environment == 'all'
