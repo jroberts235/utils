@@ -25,7 +25,7 @@ cookbook_dir  = "#{repo_dir}/cookbooks/#{cookbook}"
 file = File.open("#{cookbook_dir}/metadata.rb", 'r').each { |line| puts "Local #{line}" if line.include?('version') }
 file.close
 
-if environment == nil
+if environment == nil or environment == 'all'
     a = ['prod','dr','ops','stg',]
     a.each do |env|
     environment = env
