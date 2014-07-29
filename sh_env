@@ -26,7 +26,7 @@ file = File.open("#{cookbook_dir}/metadata.rb", 'r').each { |line| puts "Local #
 file.close
 
 if environment == nil or environment == 'all'
-    a = ['prod','dr','ops','stg',]
+    a = ['prod','dr','ops','stg','qa1','qa2','qa3','int1','int2','int3']
     a.each do |env|
     environment = env
     cmd = "#{knife_path} environment show #{environment} -c #{knife_cfg} | grep #{cookbook}"
