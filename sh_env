@@ -16,8 +16,8 @@ environment   = arg1
 cookbook      = arg2 
 
 user_name     = `whoami`.chomp
-knife_path    = '/usr/bin/knife'
-knife_cfg     = "/Users/#{user_name}/chef-repo/.chef/knife.rb"
+knife_path    = `which knife`.chomp
+knife_cfg     = "/Users/#{user_name}/.chef/knife.rb"
 repo_dir      = "/Users/#{user_name}/chef-repo"
 cookbook_dir  = "#{repo_dir}/cookbooks/#{cookbook}"
 

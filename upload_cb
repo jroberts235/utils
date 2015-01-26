@@ -4,7 +4,7 @@
 
 user_name     = `whoami`.chomp
 knife_path    = '/usr/bin/knife'
-knife_cfg     = "/Users/#{user_name}/chef-repo/.chef/knife.rb"
+knife_cfg     = "/Users/#{user_name}/.chef/knife.rb"
 repo_dir      = "/Users/#{user_name}/chef-repo"
 current_dir   = (Dir.pwd).split('/').last
 one_dir_above = (Dir.pwd).split('/')[-2]
