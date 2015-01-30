@@ -1,7 +1,7 @@
 module NukeIt
    
     class Nuke < Chef::Knife
-        banner "Delete a server from Chef, Ec2 and Sensu"
+        banner "Delete a server from Chef, Openstack, Ec2 and Sensu"
          
         deps do
           require 'chef/search/query'
