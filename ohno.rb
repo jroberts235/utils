@@ -84,8 +84,7 @@ begin
     node_data_h[node_name] = node_values_a
     output_a.push(node_data_h)
   end
-  puts "Nodes not running chef-client"
-  puts
+  puts "Nodes not running chef-client" ; puts
   printf("%-20s %18s %19s %15s \n", 'Node Name', 'Pingable?', 'DNS Matches Chef', 'Last Run(hrs)') 
   75.times { print '-' } ; puts
   output_a.each do |line|
